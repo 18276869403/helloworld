@@ -1,0 +1,107 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AllotRole</title>
+    <script src="~/Content/layui/layui.js"></script>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <table class="layui-hide" id="table_Power" lay-filter="test"></table>
+
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="AddPower">添加权限</button>
+        </div>
+    </script>
+
+    <script>
+        var table;
+        layui.use('table', function () {
+            table = layui.table;
+
+            table.render({
+                elem: '#table_Power'
+              , url: '../UserInfo/GetRoleJson'
+              , toolbar: '#toolbarDemo'
+              , title: '权限分配'
+              , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , { field: 'RoleID', title: '角色编号', align: 'center', fixed: 'left', unresize: true, sort: true }
+                , { field: 'RoleName', title: '角色名', align: 'center', sort: true }
+                , { field: 'Description', title: '描述', align: 'center' }
+              ]]
+            });
+
+            //头工具栏事件
+            table.on('toolbar(test)', function(obj){
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch(obj.event){
+                    case 'AddPower':
+                        var data = checkStatus.data;
+                        var roleID = "";
+                        for (var i = 0; i < data.length; i++) {
+                            roleID += data[i].RoleID + ",";
+                        }
+                        btn_Add(roleID);
+                        break;
+                };
+            });
+            
+            function getUrlSearch(urlStr) {
+                // 未传参，返回空
+                if (!urlStr)
+                    return null;
+                // 查询参数：先通过search取值，如果取不到就通过hash来取
+                var after = window.location.search;
+                after = after.substr(1) || window.location.hash.split('?')[1];
+                // 地址栏URL没有查询参数，返回空
+                if (!after)
+                    return null;
+                // 如果查询参数中没有"name"，返回空
+                var afterStr = after.split('=')[1];
+                if (afterStr == null){
+                    return null;
+                }
+                else {
+                    return afterStr;
+                }
+            }
+
+
+            btn_Search = function () {
+                table.load('table_Power', {
+                    url: '../RoleInfo/GetRoleJson',
+                    page: {
+                        curr:1
+                    }
+                })
+            }
+
+            btn_Add = function (roleID) {
+                var urlStr = window.location.href;
+                var UserID = getUrlSearch(urlStr);
+                $.ajax({
+                    type: 'post',
+                    url: '../UserInfo/AddRole',
+                    data: {
+                        UserID:UserID,
+                        RoleInfo:roleID
+                    },
+                    success: function (data) {
+                        if (data == "no") {
+                            alert("分配失败！");
+                        } else {
+                            alert("分配成功！");
+                            window.location.href = '../UserInfo/AllotRole?UserID='+ UserID +'';
+                        }
+                    }
+                })
+            }
+        })
+    </script>
+</body>
+</html>

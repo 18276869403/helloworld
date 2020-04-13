@@ -1,0 +1,102 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ModifiyMedicineInfo</title>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <script src="~/Content/layui/layui.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane layui-col-md-offset2" lay-filter="form_add" action="../EnterCompany/Modify">
+            <div class="layui-form-item">
+                <label class="layui-form-label">企业编号</label>
+                <div class="layui-input-inline">
+                    <input type="text" readonly="readonly" name="ID" value="@ViewBag.enter.ID" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">企业名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Name" required lay-verify="required" value="@ViewBag.enter.E_Name" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">地址</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Address" value="@ViewBag.enter.Address" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">邮政编码</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Zip" required lay-verify="required" value="@ViewBag.enter.E_Zip" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Phone" value="@ViewBag.enter.E_Phone" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">传真号码</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Fax" required lay-verify="required" value="@ViewBag.enter.E_Fax" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">注册地址</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Register_Address" value="@ViewBag.enter.Register_Address" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">网址</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Url" required lay-verify="required" value="@ViewBag.enter.E_Url" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="form_add">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+        <script>
+            //Demo
+            layui.use('form', function () {
+                var form = layui.form;
+
+                @*$("#PackID").val(@ViewBag.model.PackID);
+                $("#ClassifyID").val(@ViewBag.model.ClassifyID);
+                $("#DosageID").val(@ViewBag.model.DosageID);
+                $("#RepositID").val(@ViewBag.model.RepositID);
+                $("#EnterCompanyID").val(@ViewBag.model.EnterCompanyID);*@
+
+                form.verify({
+                    isRepeat: function (value) {
+                        var callbackdata;
+                        $.ajax({
+                            type: 'post',
+                            url: '../EnterCompany/isRepeat',
+                            async: false,
+                            data: {
+                                value: value
+                            },
+                            success: function (data) {
+                                callbackdata = data;
+                            }
+                        });
+                        if (callbackdata === "no") {
+                            return ("该企业编号已存在，请输入其它编号！！！");
+                        }
+                    }
+                })
+            });
+        </script>
+    </div>
+</body>
+</html>
+

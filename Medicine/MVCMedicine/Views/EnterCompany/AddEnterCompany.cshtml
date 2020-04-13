@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddEnterCompany</title>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/Content/layui/layui.js"></script>
+</head>
+<body>
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane layui-col-md-offset2" lay-filter="form_add" action="../EnterCompany/Add">
+            <div class="layui-form-item">
+                <label class="layui-form-label">企业名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Name" required lay-verify="required" placeholder="请输入" class="layui-input">
+                </div>
+                <label class="layui-form-label">地址</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Address" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Phone" required lay-verify="required||isphones" placeholder="请输入" class="layui-input" />
+                </div>
+                <label class="layui-form-label">邮政编码</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Zip" required lay-verify="required" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">注册地址</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Register_Address" required lay-verify="required" placeholder="请输入" class="layui-input" />
+                </div>
+                <label class="layui-form-label">传真号码</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Fax" required lay-verify="required" placeholder="请输入" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">网址</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Url" required lay-verify="required" placeholder="请输入" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="form_add">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+        <script>
+            //Demo
+            layui.use('form', function () {
+                var form = layui.form;
+
+                form.verify({
+                    //isUrl: function (value){
+                    //    reg = new RegExp('/^([0-9a-z-]{1,}.)?[0-9a-z-]{2,}.([0-9a-z-]{2,}.)?[a-z]{2,}$/');
+                    //    //reg = new RegExp('/^1\d{10}$/');
+                    //    if (!reg.test(value)) {
+                    //        return ('请输入正确的网址!');
+                    //    }
+                    //},
+                    isphones: function (value) {
+                        reg = new RegExp('^[1][3,4,5,7,8][0-9]{9}$');
+                        val = reg.test(value);
+                        if (!val) {
+                            return ('请输入以13,14,15,17,18开头的11位数号码!');
+                        }
+                    },
+                    isRepeat: function (value) {
+                        var callbackdata;
+                        $.ajax({
+                            type: 'post',
+                            url: '../Medicine/isRepeat',
+                            async: false,
+                            data: {
+                                value:value
+                            },
+                            success: function (data){
+                                callbackdata = data;
+                            }
+                        });
+                        if (callbackdata === "no") {
+                            return ("该供应商编号已存在，请输入其它编号！！！");
+                        }
+                    }
+                })
+            });
+        </script>
+    </div>
+</body>
+</html>
+
+
+

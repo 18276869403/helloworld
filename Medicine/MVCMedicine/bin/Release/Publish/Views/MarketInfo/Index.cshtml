@@ -1,0 +1,237 @@
+﻿<div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>销售管理>>销售信息</legend>
+    </fieldset>
+
+    <div class="layui-row">
+        <form class="layui-row layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-col-md-offset4">药品编号</label>
+                <div class="layui-input-inline">
+                    <input id="MedicineID" type="text" name="title" required lay-verify="required" placeholder="请输入药品编号" class="layui-input">
+                </div>
+                <button type="button" class="layui-btn" onclick="btn_Searchs()">搜索</button>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <table id="table_AddMarket" lay-filter="test"></table>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="AddMarketInfo">添加销售信息</button>
+            </div>
+        </script>
+    </div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>销售记录</legend>
+    </fieldset>
+
+    <div class="layui-row">
+        <form class="layui-row layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-col-md-offset4">人员编号</label>
+                <div class="layui-input-inline">
+                    <input id="UserID" type="text" name="title" required lay-verify="required||num" placeholder="请输入人员编号" class="layui-input">
+                </div>
+                <button type="button" class="layui-btn" onclick="btn_UserID()">搜索</button>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <script type="text/html" id="toolbarDemo1">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="EditMarketInfo">退购</button>
+                <button class="layui-btn layui-btn-sm" lay-event="DelMarketInfo">删除销售信息</button>
+            </div>
+        </script>
+
+        <table id="table_MarketInfo" lay-filter="test"></table>
+    </div>
+    <script>
+        var table;
+        var form;
+        layui.use('table', function () {
+            table = layui.table;
+            form = layui.form;
+
+            //第一个实例
+            table.render({
+                elem: '#table_MarketInfo'
+              , height: 312
+              , toolbar: "#toolbarDemo1"
+              , url: '../MarketInfo/GetJson' //数据接口
+              , limit: 5
+              , limits: [5, 10, 15, 20, 25, 30]
+              , page: true //开启分页
+              , cols: [[ //表头
+                  { type: 'checkbox', fixed: 'left' }
+                , { field: 'ID', title: 'ID', width: 60, sort: true, fixed: 'left' }
+                , { field: 'MedicineID', title: '药品编号', align: 'center' }
+                , { field: 'ChineseName', title: '药品名称', align: 'center' }
+                , { field: 'UserID', title: '人员编号', align: 'center' }
+                , { field: 'UserName', title: '用户名', align: 'center', sort: true }
+                , { field: 'MarketNumber', title: '出售数量', align: 'center', sort: true }
+                , { field: 'ForeignName', title: '药品英文名', align: 'center', sort: true }
+                , { field: 'SellTime', title: '出售时间', align: 'center' }
+                , { field: 'Price', title: '价格', align: 'center', sort: true }
+              ]]
+            });
+
+            table.render({
+                elem: '#table_AddMarket'
+             , height: 312
+             , toolbar: "#toolbarDemo"
+             , url: '../MarketInfo/GetInventoryJson' //数据接口
+             , limit: 5
+             , limits: [5, 10, 15, 20, 25, 30]
+             , page: true //开启分页
+             , cols: [[ //表头
+                 { type: 'checkbox', fixed: 'left' }
+               , { field: 'ID', title: 'ID', width: 60, sort: true, fixed: 'left' }
+               , { field: 'MedicineID', title: '药品编号', align: 'center' }
+               , { field: 'ChineseName', title: '药品名称', align: 'center' }
+               , { field: 'ForeignName', title: '药品英文名', align: 'center', sort: true }
+               , { field: 'EnterDate', title: '进货日期', align: 'center' }
+               , { field: 'Number', title: '剩余数量', align: 'center' }
+               , { field: 'Guarantee', title: '保质期', align: 'center' }
+               , { field: 'Price', title: '价格', align: 'center', sort: true }
+             ]]
+            });
+
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'AddMarketInfo':
+                        var data = checkStatus.data;
+                        if (data.length == 1) {
+                            btn_Add(data[0].MedicineID, data[0].ID);
+                        } else {
+                            alert("必须且只能选择一条数据")
+                        }
+                        break;
+                    case 'EditMarketInfo':
+                        var data = checkStatus.data;
+                        if (data.length == 1) {
+                            btn_Modify(data[0].MedicineID, data[0].ID, data[0].UserID);
+                        } else {
+                            alert("必须且只能选择一条数据")
+                        }
+                        break;
+                    case 'DelMarketInfo':
+                        var data = checkStatus.data;
+                        if (data.length == 1) {
+                            btn_Del(data[0].ID);
+                        } else {
+                            alert("必须且只能选择一条数据")
+                        }
+                        break;
+                }
+            });
+
+            btn_UserID = function () {
+                var id = $("#UserID").val();
+                numValue(id);
+                table.reload('table_MarketInfo', {
+                    url: '../MarketInfo/GetJson',
+                    page: {
+                        curr: 1
+                    },
+                    where: {
+                        UserID: id
+                    }
+                })
+            }
+
+            btn_Search = function () {
+                table.reload('table_AddMarket', {
+                    url: '../MarketInfo/GetInventoryJson',
+                    page: {
+                        curr: 1
+                    }
+                })
+            }
+
+
+            btn_Searchs = function () {
+                var ID = $('#MedicineID').val();
+
+                table.reload('table_AddMarket', {
+                    url: '../MarketInfo/GetInventoryJson',
+                    page: {
+                        curr: 1
+                    },
+                    where: {
+                        MedicineID: ID
+                    }
+                })
+            }
+
+            numValue = function (value) {
+                reg = new RegExp('^[0-9]*$');
+                if (!reg.test(value)) {
+                    alert('只能输入数字！');
+                    return;
+                }
+            }
+
+            btn_Del = function(data) {
+                $.ajax({
+                    type: 'post',
+                    url: '../MarketInfo/DelMarketInfoByID',
+                    data: {
+                        ID:data
+                    },
+                    success: function (response){
+                        alert(response);
+                        table.reload('table_MarketInfo', {
+                            url: '../MarketInfo/GetJson',
+                            page: {
+                                curr:1
+                            }
+                        })
+                    }
+                })
+            }
+
+            btn_Add = function (ID) {
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['出售药品', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3, '#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //右下角弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../MarketInfo/AddMarketInfo?MedicineID=' + ID +'', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Search();
+                    }
+                });
+            }
+
+            btn_Modify = function (ID, id,UserID) {
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['出售药品', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3, '#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //右下角弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../MarketInfo/ModifyMarketInfo?MedicineID=' + ID + '&id=' + id + '&UserID='+ UserID +'', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Search();
+                    }
+                });
+            }
+        });
+    </script>
+</div>
+    

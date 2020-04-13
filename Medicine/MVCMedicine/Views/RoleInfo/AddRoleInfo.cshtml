@@ -1,0 +1,83 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddRoleInfo</title>
+    <script src="~/Content/layui/layui.js"></script>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane layui-col-md-offset2" lay-filter="form_add" action="../RoleInfo/Add">
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色编号</label>
+                <div class="layui-input-inline">
+                    <input id="isNumber" type="text" name="RoleID" required lay-verify="required||isNumber||isRepeat" placeholder="请输入..." class="layui-input">
+                </div>
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="RoleName" required lay-verify="required" placeholder="请输入..." class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色描述</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Description" required lay-verify="required" placeholder="请输入..." class="layui-input">
+                </div>
+                <label class="layui-form-label">角色状态</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="DelFlag" value="0" title="开启" checked>
+                    <input type="radio" name="DelFlag" value="1" title="禁用">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="form_add">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+            <script>
+            //加载Demo
+            layui.use('form', function () {
+                var form = layui.form;
+                var reg
+                form.verify({
+                    isNumber: function (value) {
+                        reg = new RegExp('^[0-9]*$');
+                        if (!reg.test(value)) {
+                            return ('用户编号只能输入数字');
+                        }
+                    },
+                    //isPhone: function (value){
+                    //    reg = new RegExp('^1\d{10}$');
+                    //    if (!reg.test(value)) {
+                    //        return ('请输入正确的电话号码!');
+                    //    }
+                    //},
+                    isRepeat: function (value) {
+                        var callbackdata;
+                        $.ajax({
+                            type: 'post',
+                            url: '../UserInfo/isRepeat',
+                            async: false,
+                            data: {
+                                value:value
+                            },
+                            success: function (data){
+                                callbackdata = data;
+                            }
+                        });
+                        if (callbackdata === "yes") {
+                            return ("该药品编号已存在，请输入其它编号！！！");
+                        }
+                    }
+                })
+            });
+            </script>
+        </form>
+    </div>
+</body>
+</html>

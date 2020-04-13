@@ -1,0 +1,17 @@
+C:\Users\Administrator.USER-20190817GG\Desktop\新建文件夹\医药管理系统7.12\Medicine\Comman\bin\Debug\Comman.dll
+C:\Users\Administrator.USER-20190817GG\Desktop\新建文件夹\医药管理系统7.12\Medicine\Comman\bin\Debug\Comman.pdb
+C:\Users\Administrator.USER-20190817GG\Desktop\新建文件夹\医药管理系统7.12\Medicine\Comman\obj\Debug\Comman.dll
+C:\Users\Administrator.USER-20190817GG\Desktop\新建文件夹\医药管理系统7.12\Medicine\Comman\obj\Debug\Comman.pdb
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\Comman.dll
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\Comman.pdb
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\DataModel.dll
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\EFModel.dll
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\EntityFramework.dll
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\DataModel.pdb
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\EFModel.pdb
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\EntityFramework.xml
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\bin\Debug\zh-Hans\EntityFramework.resources.dll
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\obj\Debug\Comman.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\obj\Debug\Comman.dll
+C:\Users\Administrator\Desktop\医药管理系统7.12\Medicine\Comman\obj\Debug\Comman.pdb
+C:\Users\Administrator.USER-20190817GG\Desktop\医药管理系统7.12\Medicine\Comman\obj\Debug\Comman.csprojResolveAssemblyReference.cache

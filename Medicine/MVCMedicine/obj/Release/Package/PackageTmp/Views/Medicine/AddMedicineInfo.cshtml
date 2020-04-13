@@ -1,0 +1,163 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddMedicineInfo</title>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/Content/layui/layui.js"></script>
+</head>
+<body>
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane layui-col-md-offset2" lay-filter="form_add" action="../Medicine/Add">
+            <div class="layui-form-item">
+                <label class="layui-form-label">药品编号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="MedicineID" required lay-verify="required||isRepeat" placeholder="请输入" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">中文名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ChineseName" required lay-verify="required" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">外文名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ForeignName" required lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">成分</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Ingredient" required lay-verify="required" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">包装</label>
+                <div class="layui-input-inline">
+                    <select name="PackID">
+                        @foreach (var item in ViewBag.PackInfo)
+                        {
+                            <option value="@item.ID">@item.PackName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分类编号</label>
+                <div class="layui-input-inline">
+                    <select name="ClassifyID">
+                        @foreach(var item in ViewBag.ClassifyInfo)
+                        {
+                            <option value="@item.ID">@item.ClassifyName</option>
+                        }
+                    </select>
+                </div>
+                <label class="layui-form-label">剂型编号</label>
+                <div class="layui-input-inline">
+                    <select name="DosageID">
+                        @foreach(var item in ViewBag.DosageInfo)
+                        {
+                            <option value="@item.ID">@item.DosageName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">贮藏方式</label>
+                <div class="layui-input-inline">
+                    <select name="RepositID" lay-verify="">
+                        @foreach(var item in ViewBag.RepositInfo)
+                        {
+                            <option value="@item.ID">@item.RepositName</option>
+                        }
+                    </select>
+                </div>
+                <label class="layui-form-label">供应商</label>
+                <div class="layui-input-inline">
+                    <select name="EnterCompanyID" lay-verify="">
+                        @foreach(var item in ViewBag.EnterCompanyInfo)
+                        {
+                            <option value="@item.ID">@item.E_Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">保质期</label>
+                    <div class="layui-input-inline">
+                        <input type="date" name="ExpirationDate" required lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                    <label class="layui-form-label">规格</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Etalon" required lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">禁忌</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Taboo" required lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                    <label class="layui-form-label">药理</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Pharmacology" required lay-verify="required" placeholder="请输入" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">功能主治</label>
+                <div class="layui-input-inline">
+                    <textarea name="M_Function" required lay-verify="required" cols="50" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+                <label class="layui-form-label">注意事项</label>
+                <div class="layui-input-inline">
+                    <textarea name="Notes" required lay-verify="required" maxlength="50" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="form_add">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+        <script>
+            //Demo
+            layui.use('form', function () {
+                var form = layui.form;
+
+                form.verify({
+                    isRepeat: function (value) {
+                        var callbackdata;
+                        $.ajax({
+                            type: 'post',
+                            url: '../Medicine/isRepeat',
+                            async: false,
+                            data: {
+                                value:value
+                            },
+                            success: function (data){
+                                callbackdata = data;
+                            }
+                        });
+                        if (callbackdata === "no") {
+                            return ("该药品编号已存在，请输入其它编号！！！");
+                        }
+                    }
+                })
+            });
+        </script>
+    </div>
+</body>
+</html>

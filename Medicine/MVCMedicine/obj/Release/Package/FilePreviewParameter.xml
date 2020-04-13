@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="DengXingYu" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^F:\\文件\\果冻三键客\\Medicine\\MVCMedicine\\obj\\Release\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^F:\\文件\\果冻三键客\\Medicine\\MVCMedicine\\obj\\Release\\Package\\PackageTmp$" />
+  </parameter>
+  <parameter name="Add write permission to App_Data Folder" description="Add write permission to App_Data folder" value="DengXingYu/App_Data" tags="Hidden">
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^F:\\文件\\果冻三键客\\Medicine\\MVCMedicine\\obj\\Release\\Package\\PackageTmp\\App_Data$" />
+  </parameter>
+  <parameter name="EFContext-Web.config Connection String" description="" value="data source=PC-20191027DFSN;initial catalog=MedicineManage_GBSJK;user id=sa;password=admin001;MultipleActiveResultSets=True;App=EntityFramework" tags="">
+    <parameterEntry kind="XmlFile" scope="F:\\文件\\果冻三键客\\Medicine\\MVCMedicine\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='EFContext']/@connectionString" />
+  </parameter>
+</parameters>

@@ -1,0 +1,174 @@
+﻿
+    <table class="layui-hide" id="table_Power" lay-filter="test"></table>
+
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="AddRoleInfo">添加角色信息</button>
+            <button class="layui-btn layui-btn-sm" lay-event="ModifyRoleInfo">修改角色信息</button>
+            <button class="layui-btn layui-btn-sm" lay-event="AddPower">分配角色权限</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="CheckboxRoleDaFlag">
+        <!-- 这里的 checked 的状态只是演示 -->
+        <input type="checkbox" name="lock" value="{{d.RoleID}}" title="开启用户" lay-filter="lockDemo" {{ d.DelFlag == 0 ? 'checked' : '' }}>
+    </script>
+
+    <script>
+        var table;
+        var form;
+        layui.use('table', function () {
+            table = layui.table;
+            form = layui.form;
+
+            table.render({
+                elem: '#table_Power'
+              , url: '../RoleInfo/GetJson'
+              , toolbar: '#toolbarDemo'
+              , title: '权限分配'
+              , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , { field: 'RoleID', title: '角色编号', align: 'center', fixed: 'left', unresize: true, sort: true }
+                , { field: 'RoleName', title: '角色名', align: 'center', sort: true }
+                , { field: 'AddTime', title: '添加时间', align: 'center', sort: true }
+                , { field: 'Description', title: '描述', align: 'center', sort: true }
+                , { field: 'DelFlag', title: '是否锁定', align: 'center', templet: '#CheckboxRoleDaFlag', unresize: true }
+              ]]
+              ,page: true
+            });
+
+            //监听锁定操作
+            form.on('checkbox(lockDemo)', function (obj) {
+                var ID = this.value;
+                var check = obj.elem.checked;
+                $.ajax({
+                    type: 'post',
+                    url: '../RoleInfo/ModifyDelFlag',
+                    data: {
+                        ID: ID,
+                        DelFlag: check
+                    },
+                    success: function (data) {
+                        layer.tips(data, obj.othis);
+                    }
+                });
+            });
+
+            //头工具栏事件
+            table.on('toolbar(test)', function(obj){
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'AddRoleInfo':
+                        btn_Add();
+                        break;
+                    case 'ModifyRoleInfo':
+                        var data = checkStatus.data;
+                        if(data.length == 1){
+                            btn_Modify(data[0].RoleID);
+                        } else {
+                            alert('必须且只能选择一条数据！！！');
+                        }
+                        break;
+                    case 'DelRoleInfo':
+                        var data = checkStatus.data;
+                        if (data.length == 1) {
+                            btn_Del(data[0].RoleID);
+                        } else {
+                            alert('必须且只能选择一条数据！！！');
+                        }
+                        break;
+                    case 'AddPower':
+                        var data = checkStatus.data;
+                        var roleID = "";
+                        if (data.length == 1) {
+                            btn_Power(data[0].RoleID);
+                        } else {
+                            alert('必须且只能选择一条数据！！！');
+                        }
+                        break;
+                };
+            });
+            
+            btn_Searchs = function () {
+                table.load('table_Power', {
+                    url: '../RoleInfo/GetJson',
+                    page: {
+                        curr:1
+                    }
+                })
+            }
+
+            btn_Load = function () {
+                window.location.href = "../Home/Index";
+            }
+            btn_Add = function () {
+                //iframe窗
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['添加角色信息', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3, '#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //默认居中弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../RoleInfo/AddRoleInfo?', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Searchs();
+                    }
+                });
+            }
+
+            btn_Modify = function (RoleID) {
+                //iframe窗
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['添加角色信息', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3, '#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //默认居中弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../RoleInfo/ModifyRoleInfo?RoleID=' + RoleID + '', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Searchs();
+                    }
+                });
+            }
+
+            btn_Power = function (RoleID) {
+                //iframe窗
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['分配角色权限', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3, '#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //默认居中弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../RoleInfo/AllotPower?RoleID=' + RoleID + '', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Load();
+                    }
+                });
+            }
+
+            btn_Del = function (RoleID) {
+                $.ajax({
+                    type: 'post',
+                    url: '../RoleInfo/Delete',
+                    data: {
+                        RoleID:RoleID
+                    },
+                    success: function (response) {
+                        alert(response);
+                    }
+                });
+            }
+        })
+    </script>

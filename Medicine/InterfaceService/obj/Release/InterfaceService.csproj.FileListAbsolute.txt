@@ -1,0 +1,15 @@
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\InterfaceService.dll
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\InterfaceService.pdb
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\DataModel.dll
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\EFModel.dll
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\EntityFramework.dll
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\DataModel.pdb
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\EFModel.pdb
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\EntityFramework.xml
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\zh-Hans\EntityFramework.resources.dll
+F:\文件\果冻三键客\Medicine\InterfaceService\obj\Release\InterfaceService.dll
+F:\文件\果冻三键客\Medicine\InterfaceService\obj\Release\InterfaceService.pdb
+F:\文件\果冻三键客\Medicine\InterfaceService\bin\Release\EFModel.dll.config
+F:\文件\果冻三键客\Medicine\InterfaceService\obj\Release\InterfaceService.csprojAssemblyReference.cache
+F:\文件\果冻三键客\Medicine\InterfaceService\obj\Release\InterfaceService.csproj.CoreCompileInputs.cache
+F:\文件\果冻三键客\Medicine\InterfaceService\obj\Release\InterfaceService.csproj.CopyComplete

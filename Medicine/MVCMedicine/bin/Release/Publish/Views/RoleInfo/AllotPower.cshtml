@@ -1,0 +1,85 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AllotPower</title>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <script src="~/Content/layui/layui.js"></script>
+</head>
+<body>
+    <table id="power_table" lay-filter="test"></table>
+
+    <script type="text/html" id="CheckboxRoleDaFlag">
+        <!-- 这里的 checked 的状态只是演示 -->
+        <input type="checkbox" name="lock" value="{{d.PowerID}}" title="开启用户" lay-filter="lockDemo" {{ d.RoleID > 0 ? 'checked' : '' }}>
+    </script>
+
+    <script>
+        var urlStr = window.location.href;
+        var table;
+        var form;
+        layui.use('table', function(){
+            table = layui.table;
+            form = layui.form;
+
+          //第一个实例
+          table.render({
+              elem: '#power_table'
+            , height: 'full-20'
+            , url: '../RoleInfo/GetPowerAllotJson?RoleID='+ getUrlSearch(urlStr) + '' //数据接口
+            ,cols: [[ //表头
+                { field: 'PowerID', title: '权限编号', align: 'center', sort: true, fixed: 'left' }
+              , { field: 'powerDescription', title: '权限描述', align: 'center', sort: true }
+              , { field: 'ActionUrl', title: '功能目录', align: 'center' }
+              , { field: 'RoleID', title: '是否授权', align: 'center', templet: '#CheckboxRoleDaFlag', unresize: true }
+            ]]
+          });
+            //监听锁定操作
+          form.on('checkbox(lockDemo)', function (obj) {
+              var ID = this.value;
+              var RoleID = getUrlSearch(urlStr);
+              var check = obj.elem.checked;
+              $.ajax({
+                  type: 'post',
+                  url: '../RoleInfo/ModifyAllot',
+                  data: {
+                      PowerID: ID,
+                      RoleID: RoleID,
+                      check: check 
+                  },
+                  success: function (data) {
+                      layer.tips(data, obj.othis);
+                  }
+              });
+          });
+
+          function getUrlSearch(urlStr) {
+              // 未传参，返回空
+              if (!urlStr)
+                  return null;
+              // 查询参数：先通过search取值，如果取不到就通过hash来取
+              var after = window.location.search;
+              after = after.substr(1) || window.location.hash.split('?')[1];
+              // 地址栏URL没有查询参数，返回空
+              if (!after)
+                  return null;
+              // 如果查询参数中没有"name"，返回空
+              var afterStr = after.split('=')[1];
+              if (afterStr == null) {
+                  return null;
+              }
+              else {
+                  return afterStr;
+              }
+          }
+        });
+    </script>
+</body>
+</html>

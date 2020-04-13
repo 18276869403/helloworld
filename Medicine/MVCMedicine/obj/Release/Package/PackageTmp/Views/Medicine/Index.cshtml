@@ -1,0 +1,227 @@
+﻿<div>
+    <!--标题部分-->
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>医药管理>>药品信息</legend>
+    </fieldset>
+
+    <!--搜索框部分-->
+    <div class="layui-row">
+        <form class="layui-row layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-col-md-offset4">药品编号</label>
+                <div class="layui-input-inline">
+                    <input id="medicineID" type="text" name="title" required lay-verify="required" placeholder="请输入药品编号" class="layui-input">
+                </div>
+                <button type="button" class="layui-btn" onclick="btn_Search()">搜索</button>
+            </div>
+        </form>
+    </div>
+
+    <!--数据表格部分-->
+    <div>
+        <table id="table_Medicine" lay-filter="test"></table>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="AddMedicineInfo">添加药品信息</button>
+                <button class="layui-btn layui-btn-sm" lay-event="EditMedicineInfo">编辑药品信息</button>
+                <button class="layui-btn layui-btn-sm" lay-event="DelMedicineInfo">删除药品信息</button>
+            </div>
+        </script>
+
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+    </div>
+
+    <script>
+        //声明一个名字叫table的字段
+        var table;
+        //使用layui的控件都需要加载相应的模块，这里使用的是table控件，加载table模块
+        layui.use('table', function () {
+            table = layui.table; ////实例化table模块
+
+            //第一个实例
+            table.render({
+                //因为是table控件（数据表格），所以找到ID属性为'#table_Medicine'的table控件
+                elem: '#table_Medicine'
+                //数据表格的总高度
+              , height: 370
+                //URL链接 ：找到名为Medicine的控制器里面的GetJson方法并获取返回的值
+              , url: '../Medicine/GetJson'
+                //数据表格的标题属性
+              , title: '医药信息表格'
+                //是否开启分页
+              , page: true
+                //toolbar(开启表格头部工具栏区域) : 找到ID为'#toolbarDemo'的<script>标签
+              , toolbar: '#toolbarDemo'
+                //limit(表格每一页显示多少条数据) : 2（两条数据）
+              , limit: 5
+                //设置下拉框中的属性（每页显示多少条数据）
+              , limits: [5, 10, 15, 20, 25, 30]
+                //表头
+              , cols: [[
+                  { type: 'checkbox', fixed: 'left' } //开启表单前面的单选框（checkbox控件）
+                  //通过field键获取名为ID的值，这个ID的名字对应数据库中数据表的列名
+                  //title(设置在网页上表头显示的名字): 编号
+                  //设置名为ID这一列的width(宽度)属性：80px;
+                  //sort(是否开启排序):true  fixed(固定列)：将这一列固定在left（左边）
+                  //以下类似
+                , { field: 'MedicineID', title: '药品编号',width:120, align: 'center', sort: true, fixed: 'left' }
+                , { field: 'ChineseName', title: '中文名',width:150, align: 'center' }
+                , { field: 'ForeignName', title: '外文名', width: 150, align: 'center', sort: true }
+                , { field: 'ClassifyName', title: '种类', width: 150, align: 'center', sort: true }
+                , { field: 'DosageName', title: '剂型', width: 150, align: 'center' }
+                , { field: 'M_Function', title: '功能主治', width: 150, align: 'center' }
+                , { field: 'Ingredient', title: '成分', width: 150, align: 'center', sort: true }
+                , { field: 'E_Name', title: '供应商', width: 150, align: 'center', sort: true }
+                , { field: 'RepositName', title: '贮藏方式', width: 150, align: 'center', sort: true }
+                , { field: 'PackName', title: '包装', width: 150, align: 'center', sort: true }
+                , { field: 'Etalon', title: '规格', width: 150, align: 'center', sort: true }
+                , { field: 'Taboo', title: '禁忌', width: 150, align: 'center', sort: true }
+                , { field: 'Notes', title: '注意事项', width: 150, align: 'center', sort: true }
+                , { field: 'Pharmacology', title: '药理', width: 150, align: 'center', sort: true }
+              ]]
+            });
+
+            //头工具栏事件
+            //通过toolbar属性找到lay-filter =‘test’的table控件
+            table.on('toolbar(test)', function (obj) {
+                //obj(在这里表示鼠标点击的按钮)
+                //checkStatus(id=获取表格选中行)
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    //鼠标点击属性lay-event="AddMedicineInfo"的button控件
+                    case 'AddMedicineInfo':
+                        //添加数据的方法
+                        btn_Add();
+                        break;
+                        //鼠标点击属性lay-event="EditMedicineInfo"的button控件
+                    case 'EditMedicineInfo':
+                        var data = checkStatus.data;
+                        if (data.length == 1) {
+                            btn_Modify(data[0].MedicineID);
+                        }
+                        else {
+                            //弹窗
+                            layer.alert("选必须且只能选择一条数据！");
+                        }
+                        break;
+                        //鼠标点击属性lay-event="DelMedicineInfo"的button控件
+                    case 'DelMedicineInfo':
+                        //把我们点击选择框选中的数据赋值给data变量；checkStatus.data（获取选中的数据）
+                        var data = checkStatus.data;
+                        //判断选择的数据有多少条，多于一条或少于一条都会执行else代码块
+                        if (data.length == 1) {
+                            //当选中的只有一个数据时进入
+                            //获取data（对象）[0]（0行）名字 MedicineID 的值
+                            //执行btn_Del事件并把获取到的值=data[0].MedicineID传给btn_Del事件
+                            btn_Del(data[0].MedicineID);
+                        }
+                        else {
+                            //弹窗
+                            layer.alert("选必须且只能选择一条数据！");
+                        }
+                        break;
+                }
+            });
+
+        });
+
+        //搜索按钮单击事件 把一个function()函数/方法赋值给btn_Search
+        btn_Search = function () {
+            //声明一个medicineID变量接收id属性为'#medicineID'的值
+            var medicineID = $('#medicineID').val();
+
+            //reload(表格重载)重载：重新加载表格
+            table.reload('table_Medicine', {
+                //Url链接：找到名为Medicine的控制器里面的GetJson方法并获取返回的值
+                url: '../Medicine/GetJson'
+                //告诉table控件从第几页开始显示
+                , page: {
+                    curr: 1
+                }
+                //这里是我们想要传给控制器的值
+                , where: {
+                    //前面的medicineID是键也可以说是创建的一个变量，在控制器中通过键来获取值
+                    //后面的medicineID是值 == $('#medicineID').val();
+                    medicineID: medicineID
+                }
+            });
+        }
+
+        btn_Searchs = function () {
+            var medicineID = $('#medicineID').val();
+
+            //reload(表格重载)重载：重新加载表格
+            table.reload('table_Medicine', {
+                //Url链接：找到名为Medicine的控制器里面的GetJson方法并获取返回的值
+                url: '../Medicine/GetJson'
+                //告诉table控件从第几页开始显示
+                , page: {
+                    curr: 1
+                }
+            });
+        }
+
+       
+        //btn_Del删除事件 把一个function()函数/方法赋值给btn_Search
+        btn_Del = function (ID) {
+            //.ajax事件
+            $.ajax({
+                //传送数据的种类 分两种‘GET’和‘POST’
+                type: 'post',
+                //要执行的链接
+                url: '../Medicine/DelMedicineInfoByID',
+                //需要传给后台的数据放在data里面
+                data: {
+                    DelID: ID
+                },
+                //这里是执行成功后要走的代码，data（后台返回的值）
+                success: function (data) {
+                    //把后台的值放在弹窗里面
+                    alert(data);
+                    //删除成功或失败都重新查询一次数据
+                    btn_Search()
+                }
+            })
+        }
+
+        btn_Modify = function (ID) {
+            layer.open({
+                type: 2,
+                title: ['修改药品信息','font-size:18px;'],
+                closeBtn: 2, //不显示关闭按钮
+                shade: 0.7,
+                id:'LAY_layuipro',
+                area: ['780px', '578px'],
+                moveType:1,
+                content: '../Medicine/ModifyMedicineInfo?id='+ID+'',  //iframe的url，no代表不显示滚动条
+                end: function (index, layero) { //此处用于演示
+                    layer.close(index);
+                    btn_Searchs();
+                }
+            })
+        }
+        //btn_Add添加事件
+        btn_Add = function () {
+            //iframe窗
+
+            layer.open({
+                type: 2,
+                title: ['添加药品新品种','font-size:18px;'],
+                closeBtn: 2, //不显示关闭按钮
+                shade: 0.3,
+                id:'LAY_layuipro',
+                area: ['780px', '578px'],
+                moveType:1,
+                content: '../Medicine/AddMedicineInfo',  //iframe的url，no代表不显示滚动条
+                end: function (index) { //end表示弹窗销毁后触发的回调  index表示当前窗体
+                    layer.close(index);
+                    btn_Searchs();
+                }
+            });
+        }
+    </script>
+</div>

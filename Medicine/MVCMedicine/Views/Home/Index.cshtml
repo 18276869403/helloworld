@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>医药管理</title>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/Content/layui/layui.all.js"></script>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/layui/mycss.css" rel="stylesheet" />
+    <script src="~/Content/layui/layui.js"></script>    
+</head>
+
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo">宝庆医药管理系统</div>
+
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="~/images/avtar.png" class="layui-nav-img">
+                        夕阳
+                    </a>
+                <li class="layui-nav-item"><a href="">退出</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-bg-black left-panel">
+            <div class="layui-side-scroll" id="navLink">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    @foreach (var item in ViewBag.Menu)
+                    {
+                        if (item.ParentID == 0)
+                        {
+                            <li class="layui-nav-item layui-nav-itemed">
+                                <a class="" href="javascript:;"><i style="padding-right:20px;"><img src="@item.MenuIconUrl" /></i><span>@item.MenuName</span></a>
+                                <dl class="layui-nav-child">
+                                    @foreach (var item1 in ViewBag.Menu)
+                                    {
+                                        if (@item1.ParentID == @item.PowerID)
+                                        {
+                                            <!-- 导航，使用data属性获取链接页面的信息 -->
+                                            <dd><a href="javascript:;" data="@item1.ActionUrl"><i style="padding-right:20px;"><img src="@item1.MenuIconUrl" /></i><span>@item1.MenuName</span></a></dd>
+                                        }
+                                    }
+                                </dl>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <div class="layui-body">
+            <!-- 内容主体区域 -->
+            <div style="padding: 15px;" id="divContent">内容主体区域</div>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            © layui.com - 底部固定区域
+        </div>
+    </div>
+    <script>
+        //JavaScript代码区域、
+        //使用layui的控件都需要加载相应的模块，这里使用的是element控件（可以这么理解，整个Html就是一个element控件）
+        //加载element模块
+        layui.use('element', function(){
+            var element = layui.element; //实例化element模块
+        });
+
+        //给a标签添加单击事件
+        $('#navLink a').on('click',function(e){
+            var tabName = $(this).attr('data') //$(this).attr('data')表示点击的a标签获取到的返回页面
+            if (tabName != undefined) {
+                //如果tabName的属性不是undefined（不明确的），
+                //就把获取到的页面信息加载到名字为#divContent的div标签里面
+                $('#divContent').load(tabName);
+            }
+        })
+    </script>
+</body>
+</html>

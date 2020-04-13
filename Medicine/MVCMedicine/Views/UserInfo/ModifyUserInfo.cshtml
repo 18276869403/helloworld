@@ -1,0 +1,106 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ModifyUserInfo</title>
+    <script src="~/Content/layui/layui.js"></script>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane layui-col-md-offset2" lay-filter="form_add" action="../UserInfo/Modify">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户编号</label>
+                <div class="layui-input-inline">
+                    <input id="isNumber" type="text" value="@ViewBag.model.UserID" name="UserID" readonly required class="layui-input" style="color:#ff0000;font-weight:600;">
+                </div>
+                <label class="layui-form-label">用户姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="UserName" value="@ViewBag.model.UserName" required lay-verify="required" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">部门</label>
+                <div class="layui-input-inline">
+                    <select name="DepartmentID">
+                        @foreach (var item in ViewBag.depmodel)
+                        {
+                            <option value="@item.DepartmentID">@item.DepartmentName</option>
+                        }
+                    </select>
+                </div>
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="UserPhone" value="@ViewBag.model.UserPhone" required lay-verify="required||isPhone" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-inline">
+                    @if (ViewBag.model.Sex == 0)
+                    {
+                        <input type="radio" name="Sex" value="@ViewBag.model.Sex" title="男" checked>
+                        <input type="radio" name="Sex" value="1" title="女">
+                    }
+                    else
+                    {
+                        <input type="radio" name="Sex" value="0" title="男">
+                        <input type="radio" name="Sex" value="@ViewBag.model.Sex" title="女" checked>
+                    }
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="form_add">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+            <script>
+                $("#id_Sex").val(@ViewBag.model.Sex);
+                $("#DelFlag").val(@ViewBag.model.DelFlag);
+                
+                //加载Demo
+                layui.use('form', function () {
+                    var form = layui.form;
+                    var reg
+                    form.verify({
+                        isNumber: function (value) {
+                            reg = new RegExp('^[0-9]*$');
+                            if (!reg.test(value)) {
+                                return ('用户编号只能输入数字');
+                            }
+                        },
+                        //isPhone: function (value){
+                        //    reg = new RegExp('^1\d{10}$');
+                        //    if (!reg.test(value)) {
+                        //        return ('请输入正确的电话号码!');
+                        //    }
+                        //},
+                        isRepeat: function (value) {
+                            var callbackdata;
+                            $.ajax({
+                                type: 'post',
+                                url: '../UserInfo/isRepeat',
+                                async: false,
+                                data: {
+                                    value: value
+                                },
+                                success: function (data) {
+                                    callbackdata = data;
+                                }
+                            });
+                            debugger;
+                            if (callbackdata === "yes") {
+                                return ("该药品编号已存在，请输入其它编号！！！");
+                            }
+                        }
+                    })
+                });
+            </script>
+        </form>
+    </div>
+</body>
+</html>

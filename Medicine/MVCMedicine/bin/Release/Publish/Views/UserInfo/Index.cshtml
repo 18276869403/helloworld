@@ -1,0 +1,211 @@
+﻿
+<div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>系统管理>>成员信息</legend>
+    </fieldset>
+    <div class="layui-row">
+        <label class="layui-form-label layui-col-md-offset4">用户编号</label>
+        <div class="layui-input-inline">
+            <input id="UserID" type="text" name="title" required lay-verify="required" placeholder="请输入用户编号" autocomplete="off" class="layui-input">
+        </div>
+        <button type="button" class="layui-btn" onclick="btn_Search()">搜索</button>
+    </div>
+    
+    <div>
+        <table id="table_UserInfo" lay-filter="test"></table>
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="AddUserInfo">添加用户信息</button>
+                <button class="layui-btn layui-btn-sm" lay-event="EditUserInfo">编辑用户信息</button>
+                <button class="layui-btn layui-btn-sm" lay-event="AddPower">分配权限</button>
+            </div>
+        </script>
+
+        <script type="text/html" id="CheckboxSexDaFlag">
+            <!-- 这里的 checked 的状态只是演示 -->
+            <input type="checkbox" name="lock" value="{{d.UserID}}" title="开启用户" lay-filter="lockDemo" {{ d.DelFlag == 0 ? 'checked' : '' }}>
+        </script>
+
+        <script type="text/html" id="sexTpl">
+            {{#  if(d.Sex == 0){ }}
+            <span>男</span>
+            {{#  } else { }}
+            <span style="color: #F581B1;">女</span>
+            {{#  } }}
+        </script>
+
+    </div>
+        <script>
+            var table;
+            layui.use('table', function () {
+                table = layui.table
+                ,form = layui.form
+                //第一个实例
+                table.render({
+                    elem: '#table_UserInfo'
+                  , height: 312
+                  , url: '../UserInfo/GetJson' //数据接口
+                  , toolbar: '#toolbarDemo'
+                  , limit: 5
+                  , limits: [5, 10, 15, 20, 25,30]
+                  , page: true //开启分页
+                  , cols: [[ //表头
+                      { type: 'checkbox', fixed: 'left' }
+                    , { field: 'UserID', title: '用户编号', align: 'center' }
+                    , { field: 'UserName', title: '用户名',align:'center' }
+                    , { field: 'UserPhone', title: '联系电话', align: 'center' }
+                    , { field: 'Sex', title: '性别', align: 'center', templet: '#sexTpl', unresize: true }
+                    , { field: 'AddTime', title: '添加时间', align: 'center', sort: true }
+                    , { field: 'DepartmentName', title: '部门', align: 'center', sort: true }
+                    , { field: 'RoleName', title: '角色信息', align: 'center', sort: true }
+                    , { field: 'DelFlag', title: '是否锁定', align: 'center', templet: '#CheckboxSexDaFlag', unresize: true }
+                  ]]
+                });
+
+                //监听锁定操作
+                form.on('checkbox(lockDemo)', function (obj) {
+                    var ID = this.value;
+                    var check = obj.elem.checked;
+                    $.ajax({
+                        type: 'post',
+                        url: '../UserInfo/ModifyDelFlag',
+                        data: {
+                            ID: ID,
+                            FlagID:check
+                        },
+                        success:function (data) {
+                            layer.tips(data,obj.othis);
+                        }
+                    });
+                });
+
+                //头工具栏事件
+                table.on('toolbar(test)', function (obj) {
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    switch (obj.event) {
+                        case 'AddUserInfo':
+                            btn_Add();
+                            break;
+                        case 'EditUserInfo':
+                            var data = checkStatus.data;
+                            if (data.length == 1) {
+                                btn_Modify(data[0].UserID);
+                            }
+                            else {
+                                alert("选必须且只能选择一条数据！");
+                            }
+                            break;
+                        case 'DelUserInfo':
+                            var data = checkStatus.data;
+                            if (data.length == 1) {
+                                btn_Del(data[0].UserID);
+                            }
+                            else {
+                                alert("选必须且只能选择一条数据！");
+                            }
+                            break;
+                        case 'AddPower':
+                            var data = checkStatus.data;
+                            if (data.length == 1) {
+                                btn_AddPower(data[0].UserID);
+                            }
+                            else {
+                                alert("选必须且只能选择一条数据！");
+                            }
+                            break;
+                    };
+                });
+            });
+            btn_Searchs = function () {
+                table.reload('table_UserInfo', {
+                    url: '../UserInfo/GetJson',
+                    page: {
+                        curr: 1
+                    }
+                })
+            }
+
+            btn_Search = function () {
+                var data = $("#UserID").val();
+                table.reload('table_UserInfo', {
+                    url: '../UserInfo/GetJson',
+                    page: {
+                        curr: 1
+                    },
+                    where: {
+                        UserID: data
+                    }
+                });
+            }
+            btn_Del = function (data) {
+                $.ajax({
+                    type: 'post',
+                    url: '../UserInfo/DelUserInfoByID',
+                    data: {
+                        UserID:data
+                    },
+                    success:function (response) {
+                        layer.alert(response);
+                        btn_Search();
+                    }
+                })
+            }
+
+            btn_AddPower = function (ID) {
+                //iframe窗
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['分配角色', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3, '#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //默认居中弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../UserInfo/AllotRole?UserID=' + ID + '', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Searchs();
+                    }
+                });
+            }
+
+            btn_Add = function () {
+                //iframe窗
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['添加用户信息', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3,'#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //右下角弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../UserInfo/AddUserInfo', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Searchs();
+                    }
+                });
+            }
+
+            btn_Modify = function (ID) {
+                //iframe窗
+                layer.open({
+                    type: 2, //弹窗 0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: ['修改用户信息', 'font-size:18px;'], //弹窗的标题
+                    closeBtn: 2, //ayer提供了两种风格的关闭按钮，可通过配置1和2来展示，如果不显示，则closeBtn: 0
+                    shade: [0.3, '#000'], //遮罩，遮住弹窗后面的东西
+                    area: ['780px', '578px'], //宽高
+                    offset: 'auto', //默认居中弹出
+                    id: 'layerUser', //id - 用于控制弹层唯一标识
+                    anim: 0, //弹窗出来的动画
+                    content: '../UserInfo/ModifyUserInfo?UserID='+ ID +'', //iframe的url，no代表不显示滚动条
+                    end: function (index, layero) { //end表示弹窗销毁后触发的回调  index表示当前窗体 layero在这里暂时没意义
+                        layer.close(index);
+                        btn_Searchs();
+                    }
+                });
+            }
+        </script>
+</div>

@@ -1,0 +1,36 @@
+﻿
+<div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>仓库管理>>库存信息</legend>
+    </fieldset>
+
+    <div>
+        <table id="table_Inventory" lay-filter="test">
+        </table>
+    </div>
+
+    <script>
+            var table;
+            layui.use('table', function () {
+                table = layui.table
+                , form = layui.form
+                //第一个实例
+                table.render({
+                    elem: '#table_Inventory'
+                  , height: 312
+                  , url: '../Inventory/GetJson' //数据接口
+                  , limit: 5
+                  , limits: [5, 10, 15, 20, 25, 30]
+                  , page: true //开启分页
+                  , cols: [[ //表头
+                      { type: 'checkbox', fixed: 'left' }
+                    , { field: 'ID', title: 'ID', width: 80, sort: true, fixed: 'left' }
+                    , { field: 'ChineseName', title: '药品名',align:'center' }
+                    , { field: 'ForeignName', title: '英文名', align:'center' }
+                    , { field: 'E_Name', title: '供应商', align:'center'}
+                    , { field: 'Number', title: '库存数量', align:'center', sort: true }
+                  ]]
+                });
+            })
+    </script>
+</div>

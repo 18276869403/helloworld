@@ -1,0 +1,74 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ModifiyMedicineInfo</title>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <script src="~/Content/layui/layui.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane layui-col-md-offset2" lay-filter="form_add" action="../EnterInfo/Modify">
+            <div class="layui-form-item">
+                <label class="layui-form-label">编号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ID" readonly value="@ViewBag.enter.ID" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">药品名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ChineseName" readonly value="@ViewBag.Medicine.ChineseName" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">数量</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="MarketNumber" lay-verify="required||num" value="@ViewBag.enter.MarketNumber" placeholder="请输入..." class="layui-input">
+                </div>
+
+                <label class="layui-form-label">供应商</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="E_Name" readonly value="@ViewBag.Company.E_Name" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">进货时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="EnterDate" readonly value="@ViewBag.enter.EnterDate" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">进货价</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="EnterPrice" readonly value="@ViewBag.enter.EnterPrice" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="form_add">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+        <script>
+            //Demo
+            layui.use('form', function () {
+                var form = layui.form;
+
+                form.verify({
+                    num: function (value) {
+                        reg = new RegExp('^[0-9]*$');
+                        if (!reg.test(value)) {
+                            return ('数量只能输入数字');
+                        }
+                    }
+                })
+            });
+        </script>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,82 @@
+﻿
+
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddEnterInfo</title>
+    <script src="~/Content/layui/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/Content/layui/layui.js"></script>
+</head>
+<body>
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane layui-col-md-offset2" lay-filter="form_add" action="../EnterInfo/Add">
+            <div class="layui-form-item">
+                <label class="layui-form-label">药品名称</label>
+                <div class="layui-input-inline">
+                    <select name="MedicineID">
+                        @foreach (var item in ViewBag.Medicine)
+                        {
+                            <option value="@item.MedicineID">@item.ChineseName</option>
+                        }
+                    </select>
+                </div>
+    
+                <label class="layui-form-label">进货数量</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="MarketNumber" required lay-verify="required||num||num0" placeholder="请输入" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">企业名称</label>
+                <div class="layui-input-inline">
+                    <select name="ID">
+                        @foreach (var item in ViewBag.EnterCompany)
+                        {
+                            <option value="@item.ID">@item.E_Name</option>
+                        }
+                    </select>
+                </div>
+                <label class="layui-form-label">进货价</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="EnterPrice" required lay-verify="required" placeholder="请输入" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="form_add">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+        <script>
+            //Demo
+            layui.use('form', function () {
+                var form = layui.form;
+
+                form.verify({
+                    num: function (value) {
+                        reg = new RegExp('^[0-9]*$');
+                        if (!reg.test(value)) {
+                            return ('数量只能输入数字');
+                        }
+                    },
+                    num0: function (value) {
+                        if (value == 0) {
+                            return ('请输入大于0的数量');
+                        }
+                    }
+                })
+            });
+        </script>
+    </div>
+</body>
+</html>
